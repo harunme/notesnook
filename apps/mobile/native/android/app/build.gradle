@@ -179,12 +179,12 @@ android {
             def abi = output.getFilter(OutputFile.ABI)
             if (abi != null) {  // null for the universal-debug, universal-release variants
                 if (fdroidBuild()) {
-                    output.versionCodeOverride =
+                    output.versionCode =
                        defaultConfig.versionCode * 5 + versionCodes.get(abi)
-                    println("Fdroid Version code: ${output.versionCodeOverride} for abi ${versionCodes.get(abi)}");
+                    println("Fdroid Version code: ${output.versionCode} for abi ${versionCodes.get(abi)}");
                 } else {
-                    println("Version code: ${output.versionCodeOverride} for abi ${versionCodes.get(abi)}");
-                    output.versionCodeOverride =
+                    println("Version code: ${output.versionCode} for abi ${versionCodes.get(abi)}");
+                    output.versionCode =
                         versionCodes.get(abi) * 1048576 + defaultConfig.versionCode
                 }
                 
