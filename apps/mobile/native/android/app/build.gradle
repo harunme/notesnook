@@ -1,5 +1,7 @@
 apply plugin: "com.android.application"
+apply plugin: "org.jetbrains.kotlin.android"
 apply plugin: "com.facebook.react"
+
 apply from: project(':react-native-config').projectDir.getPath() + "/dotenv.gradle"
 
 import com.android.build.OutputFile
@@ -100,6 +102,9 @@ def getNpmVersion() {
 android {
     compileSdkVersion rootProject.ext.compileSdkVersion
     ndkVersion rootProject.ext.ndkVersion
+    buildToolsVersion rootProject.ext.buildToolsVersion
+    compileSdk rootProject.ext.compileSdkVersion
+
     compileOptions {
         sourceCompatibility JavaVersion.VERSION_1_8
         targetCompatibility JavaVersion.VERSION_1_8
@@ -111,7 +116,7 @@ android {
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
         multiDexEnabled true
-        versionCode 3020
+        versionCode 3021
         versionName getNpmVersion()
         testBuildType System.getProperty('testBuildType', 'debug')
         testInstrumentationRunner 'androidx.test.runner.AndroidJUnitRunner'
@@ -174,12 +179,12 @@ android {
             def abi = output.getFilter(OutputFile.ABI)
             if (abi != null) {  // null for the universal-debug, universal-release variants
                 if (fdroidBuild()) {
-                    output.versionCodeOverride =
+                    output.versionCode =
                        defaultConfig.versionCode * 5 + versionCodes.get(abi)
-                    println("Fdroid Version code: ${output.versionCodeOverride} for abi ${versionCodes.get(abi)}");
+                    println("Fdroid Version code: ${output.versionCode} for abi ${versionCodes.get(abi)}");
                 } else {
-                    println("Version code: ${output.versionCodeOverride} for abi ${versionCodes.get(abi)}");
-                    output.versionCodeOverride =
+                    println("Version code: ${output.versionCode} for abi ${versionCodes.get(abi)}");
+                    output.versionCode =
                         versionCodes.get(abi) * 1048576 + defaultConfig.versionCode
                 }
                 
@@ -203,13 +208,7 @@ dependencies {
 
     androidTestImplementation('com.wix:detox:+')
     implementation 'androidx.appcompat:appcompat:1.1.0'
-
-    debugImplementation("com.facebook.flipper:flipper:${FLIPPER_VERSION}")
-    debugImplementation("com.facebook.flipper:flipper-network-plugin:${FLIPPER_VERSION}") {
-        exclude group:'com.squareup.okhttp3', module:'okhttp'
-    }
-
-    debugImplementation("com.facebook.flipper:flipper-fresco-plugin:${FLIPPER_VERSION}")
+    
     if (hermesEnabled.toBoolean()) {
         implementation("com.facebook.react:hermes-android")
     } else {
